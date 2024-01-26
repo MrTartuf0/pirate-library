@@ -1,10 +1,7 @@
 <template>
   <UContainer>
     <div class="flex items-center flex-col">
-      <img src="/logo.svg" class="w-1/2">
-      <p class="pb-8">
-        🏴‍☠️ Ahoy, Matey! Welcome to the Literary Seas of Knowledge at our Pirate-themed Library! 🏴‍☠️
-      </p>
+      <img src="/search_logo.svg" class="w-1/2 pb-8 pt-8">
       <UForm class="w-1/2 flex gap-4" @submit="formSubmit(searchQuery)">
         <UInput
           v-model="searchQuery"
@@ -24,7 +21,10 @@
 </template>
 
 <script setup>
-  async function formSubmit(q){
-    await navigateTo('/search/' + q)
+  const route = useRoute()
+  const searchQuery = ref(route.params.query)
+  function formSubmit(q){
+    console.log(q);
   }
-</script>
+</script>  
+
