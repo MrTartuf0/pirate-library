@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  web:
+    build: ./be/rusted_files
+    ports:
+      - "8000:80"
+    volumes:
+      - ./be/rusted_files:/app
+  api:
+    build: ./be
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./be:/app
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./be/mongo:/etc/mongo
