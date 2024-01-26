@@ -1,5 +1,0 @@
-server:
-  port: 80
-  threads: 2
-  ttl: 20
-  root: ./web
