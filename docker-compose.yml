@@ -22,3 +22,5 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
       - ./be/mongo:/etc/mongo
+    ports:
+      - "27017:27017"
