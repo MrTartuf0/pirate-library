@@ -1,11 +1,14 @@
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+
 var jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3000;
+app.use(cors());
 
 mongoose.connect('mongodb://root:example@mongo:27017');
 
