@@ -2,13 +2,12 @@ import bodyParser from 'body-parser';
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
-
+var jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3000;
 
 mongoose.connect('mongodb://root:example@mongo:27017');
-var jwt = require('jsonwebtoken');
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -34,6 +33,7 @@ const userSchema = new mongoose.Schema({
 const bookSchema = new mongoose.Schema({
   isbn: { type: String, unique: true },
   title: String,
+  added: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   url_link: String,
 });
@@ -160,13 +160,19 @@ app.get('/search-by-name/:name', async (req: Request, res: Response) => {
 
 app.get('/books', async (req: Request, res: Response) => {
   try {
-    const books = await Book.find();
+    const page: number = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit: number = 25;
+    const skip: number = (page - 1) * limit;
+
+    const books = await Book.find().skip(skip).limit(limit);
+
     res.json(books);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 app.listen(PORT, () => {
