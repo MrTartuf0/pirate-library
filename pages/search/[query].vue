@@ -21,7 +21,7 @@
     <UCard
       v-for="(item, index) in mockData.results"
       :key="index"
-      class="mb-6 dark:hover:ring-primary-500 dark:hover:ring-2"
+      class=" mb-6 dark:hover:ring-primary-500 dark:hover:ring-2"
     >
       <div class="flex gap-6">
         <img :src="item.thumbnail" class="w-32 cursor-pointer" />

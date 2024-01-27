@@ -18,44 +18,55 @@
       </UForm>
     </div>
     <UDivider class="mb-4" />
-    <UCard
-      v-for="(item, index) in mockData.results"
-      :key="index"
-      class="mb-6 dark:hover:ring-primary-500 dark:hover:ring-2"
-    >
-      <div class="flex gap-6">
-        <img :src="item.thumbnail" class="w-32 cursor-pointer" />
-        <div class="flex flex-col justify-between w-full">
-          <div class="space-y-1">
-            <h1 class="underline text-2xl cursor-pointer">
-              {{ item.title }}
-            </h1>
-            <p
-              class="text-gray-400 cursor-pointer hover:text-primary-200"
-              @click="formSubmit(item.publisher.replaceAll('/', ' '))"
-            >
-              {{ item.publisher }}
-            </p>
+    <UCard>
+      <div class="flex justify-between gap-12">
+        <div class="flex flex-col justify-between">
+          <div>
+            <h1 class="text-4xl font-bold pb-2">{{ mockData.title }}</h1>
+            <p class="underline cursor-pointer pb-1">{{ mockData.author }}</p>
+            <p>{{ mockData.plot }}</p>
           </div>
-          <div class="flex justify-end gap-4">
-            <div class="space-x-2">
-              <span class="text-gray-400">Author:</span>
-              <UBadge :label="item.author" variant="soft" />
+          <div class="grid grid-cols-3 w-full gap-6">
+            <div class="space-y-2">
+              <p class="text-gray-400">
+                Categories:
+                <span
+                  class="underline mr-1 text-white"
+                  v-for="(cat, index) in mockData.categories"
+                  :key="index"
+                >
+                  {{ cat }}
+                </span>
+              </p>
+              <p class="text-gray-400">
+                Language:
+                <span class="text-white">{{ mockData.language }}</span>
+              </p>
             </div>
-            <div class="space-x-2">
-              <span class="text-gray-400">Year:</span>
-              <UBadge :label="item.year" variant="soft" />
+            <div class="space-y-2">
+              <p class="text-gray-400">
+                Year: <span class="text-white">{{ mockData.year }}</span>
+              </p>
+              <p class="text-gray-400">
+                Publisher:
+                <span class="text-white">{{ mockData.publisher }}</span>
+              </p>
+              <p class="text-gray-400">
+                Pages: <span class="text-white">{{ mockData.pages }}</span>
+              </p>
             </div>
-            <div class="space-x-2">
-              <span class="text-gray-400">Language:</span>
-              <UBadge :label="item.language" variant="soft" />
-            </div>
-            <div class="space-x-2">
-              <span class="text-gray-400">Filetype:</span>
-              <UBadge :label="item.filetype" variant="soft" />
+            <div class="space-y-2">
+              <p class="text-gray-400">
+                ISBN:
+                <UBadge :label="mockData.isbn" variant="soft" />
+              </p>
+              <p class="font-semibold ">
+                Resource: <UButton size="xs">{{ mockData.filetype + ' ' + mockData.filesize }}</UButton>
+              </p>
             </div>
           </div>
         </div>
+        <img :src="mockData.thumbnail" class="h-96" />
       </div>
     </UCard>
   </UContainer>
@@ -66,23 +77,24 @@ const route = useRoute();
 const searchQuery = ref(route.params.query);
 
 const mockData = ref({
-  title:
-    "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
+  title: "Niente può fermarti. Can't Hurt Me",
   thumbnail:
-    "https://isbncoverdb.com/images/book-cover-atomic-habits-1770005.webp",
+    "https://static.1lib.sk/covers/books/1a/c7/52/1ac752391a26a02c3652e48ffa6e0b53.jpg",
+  plot: "For David Goggins, childhood was a nightmare — poverty, prejudice, and physical abuse colored his days and haunted his nights. But through self-discipline, mental toughness, and hard work, Goggins transformed himself from a depressed, overweight young man with no future into a U.S. Armed Forces icon and one of the world's top endurance athletes. The only man in history to complete elite training as a Navy SEAL, Army Ranger, and Air Force Tactical Air Controller, he went on to set records in numerous endurance events, inspiring Outside magazine to name him “The Fittest (Real) Man in America.”",
   year: 2022,
-  language: English,
+  language: "English",
   isbn: 1804220493,
   pages: 69,
-  filetype: "pdf",
-  author: "James Clear",
-  publisher: userName,
+  author: "David Goggins",
+  publisher: "Vallardi",
   categories: [
     "Self-help",
     "Personal development",
     "Habit Formation",
     "Behavioral Psychology",
   ],
+  filetype: "pdf",
+  filesize: "7.0mb",
   resource: "/api/file.pdf",
 });
 
