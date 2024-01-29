@@ -30,18 +30,13 @@
               trailing
               placeholder="Secret map coordinates, savvy?"
             />
-            <p class="text-xs mt-4 mb-4">
-              Lost yer way in Davy Jones' locker?
-              <span class="text-primary-300 underline cursor-pointer">Retrieve yer secret path</span>
-              , landlubber!
-            </p>
           </UFormGroup>
 
-          <UButton type="submit" class="mt-16 w-full justify-center"> Log In </UButton>
+          <UButton type="submit" class="mt-16 w-full justify-center"> Register now! </UButton>
           <UDivider label="OR" class="mb-16"/>
           <div class="flex justify-between">
-            <p class="text-sm">Join the Pirate Crew: Chart yer course</p> 
-            <UButton to="/register">Register now!</UButton>
+            <p class="text-sm">Already aboard? Sail on, matey!</p> 
+            <UButton to="/login">Log In</UButton>
           </div>
         </UForm>
       </div>
