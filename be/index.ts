@@ -33,10 +33,19 @@ const userSchema = new mongoose.Schema({
 const bookSchema = new mongoose.Schema({
   isbn: { type: String, unique: true },
   title: String,
+  thumbnail: String,
+  plot: String,
+  year: Number,
+  language: String,
+  pages: Number,
+  author: String,
+  publisher: String,
+  categories: [String],
   added: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   url_link: String,
 });
+
 
 const User = mongoose.model('User', userSchema);
 const Book = mongoose.model('Book', bookSchema);
@@ -61,30 +70,44 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }).fields([
+  { name: 'book', maxCount: 1 },
+  { name: 'thumbnail', maxCount: 1 }
+]);
 
-app.post('/upload-book', upload.single('book'), async (req: Request, res: Response) => {
+app.post('/upload-book', upload, async (req: Request, res: Response) => {
   try {
-    const { isbn } = req.body;
-    
+    const { isbn, title, thumbnail, plot, year, language, pages, author, publisher, categories,    } = req.body;
+
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(403).json({ error: 'No token provided' });
 
     const decoded: any = jwt.verify(token, 'secret_key');
     const userId = decoded.userId;
-    const uploadedFile = req.file as UploadedFile | undefined;
 
-    if (!uploadedFile) {
-      return res.status(400).json({ error: 'No file uploaded' });
+    const uploadedBook = req.files['book'][0];
+    const uploadedThumbnail = req.files['thumbnail'][0];
+
+    if (!uploadedBook || !uploadedThumbnail) {
+      return res.status(400).json({ error: 'Both book and thumbnail files must be uploaded' });
     }
-
-    const filename = uploadedFile.originalname;
 
     const newBook = new Book({
       isbn,
-      title: filename,
+      title,
+      thumbnail: uploadedThumbnail.filename,
+      plot,
+      year,
+      language,
+      pages,
+      author,
+      publisher,
+      categories,
+      
+      
+      
       user: userId,
-      url_link: "http://localhost:8000/" + filename,
+      url_link: "http://localhost:8000/" + uploadedBook.filename,
     });
 
     await newBook.save();
