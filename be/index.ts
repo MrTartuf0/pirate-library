@@ -1,21 +1,18 @@
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import express, { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import multer from 'multer';
 
-var jwt = require('jsonwebtoken');
-
 const app = express();
 const PORT = 3000;
-app.use(cors());
+app.use(bodyParser.json());
 
 mongoose.connect('mongodb://root:example@mongo:27017');
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
-
 
 interface UploadedFile {
   fieldname: string;
@@ -41,11 +38,64 @@ const bookSchema = new mongoose.Schema({
   url_link: String,
 });
 
-
 const User = mongoose.model('User', userSchema);
+const Book = mongoose.model('Book', bookSchema);
 
-const Book = mongoose.model('Book', bookSchema)
-app.use(bodyParser.json());
+const verifyToken = (req: Request, res: Response, next: any) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(403).json({ error: 'No token provided' });
+
+  jwt.verify(token, 'secret_key', (err: any, decoded: any) => {
+    if (err) return res.status(401).json({ error: 'Failed to authenticate token' });
+    req.userId = decoded.userId;
+    next();
+  });
+};
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './rusted_files/web');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload-book', upload.single('book'), async (req: Request, res: Response) => {
+  try {
+    const { isbn } = req.body;
+    
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(403).json({ error: 'No token provided' });
+
+    const decoded: any = jwt.verify(token, 'secret_key');
+    const userId = decoded.userId;
+    const uploadedFile = req.file as UploadedFile | undefined;
+
+    if (!uploadedFile) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filename = uploadedFile.originalname;
+
+    const newBook = new Book({
+      isbn,
+      title: filename,
+      user: userId,
+      url_link: "http://localhost:8000/" + filename,
+    });
+
+    await newBook.save();
+
+    res.status(200).json({ message: 'Book uploaded successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -56,7 +106,7 @@ app.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const validPassword = await password === user.password
+    const validPassword = await password === user.password;
     if (!validPassword) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -78,53 +128,10 @@ app.post('/create', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-
     const newUser = new User({ email, password: password });
     await newUser.save();
 
     res.status(201).json({ message: 'User created successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './rusted_files/web');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({ storage: storage });
-
-
-app.post('/upload-book', upload.single('book'), async (req: Request, res: Response) => {
-  try {
-    const { isbn, userId } = req.body;
-    const uploadedFile = req.file as UploadedFile | undefined;
-
-    if (!uploadedFile) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-
-    const filename  = uploadedFile.originalname;
-
-    const newBook = new Book({
-      isbn,
-      title: filename,
-      user: userId, 
-      url_link: "http://localhost:8000/"+filename, 
-    });
-
-    await newBook.save();
-
-    res.status(200).json({ message: 'Book uploaded successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -175,8 +182,6 @@ app.get('/books', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
