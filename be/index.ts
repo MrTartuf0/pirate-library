@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser';
+import cors from 'cors'; // Import cors
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
@@ -7,6 +8,8 @@ import multer from 'multer';
 const app = express();
 const PORT = 3000;
 app.use(bodyParser.json());
+
+app.use(cors()); // Use cors middleware
 
 mongoose.connect('mongodb://root:example@mongo:27017');
 
@@ -77,8 +80,7 @@ const upload = multer({ storage: storage }).fields([
 
 app.post('/upload-book', upload, async (req: Request, res: Response) => {
   try {
-    const { isbn, title, thumbnail, plot, year, language, pages, author, publisher, categories,    } = req.body;
-
+    const { isbn, title, plot, year, language, pages, author, publisher, categories,    } = req.body;
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(403).json({ error: 'No token provided' });
 
@@ -87,7 +89,7 @@ app.post('/upload-book', upload, async (req: Request, res: Response) => {
 
     const uploadedBook = req.files['book'][0];
     const uploadedThumbnail = req.files['thumbnail'][0];
-
+    console.log("thumbnailasdasdasddsad!", uploadedThumbnail.originalname);
     if (!uploadedBook || !uploadedThumbnail) {
       return res.status(400).json({ error: 'Both book and thumbnail files must be uploaded' });
     }
@@ -95,7 +97,7 @@ app.post('/upload-book', upload, async (req: Request, res: Response) => {
     const newBook = new Book({
       isbn,
       title,
-      thumbnail: uploadedThumbnail.filename,
+      thumbnail: "http://localhost:8000/" + uploadedThumbnail.originalname,
       plot,
       year,
       language,
@@ -103,9 +105,6 @@ app.post('/upload-book', upload, async (req: Request, res: Response) => {
       author,
       publisher,
       categories,
-      
-      
-      
       user: userId,
       url_link: "http://localhost:8000/" + uploadedBook.filename,
     });
