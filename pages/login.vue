@@ -47,9 +47,12 @@
       </div>
     </UContainer>
   </div>
+  <UButton type="submit" class="mt-16 w-full justify-center" @click="login"> Log In </UButton>
+
 </template>
 
 <script setup>
+
 const state = reactive({
   email: undefined,
   password: undefined,
@@ -61,4 +64,27 @@ const validate = (state) => {
   if (!state.password) errors.push({ path: "password", message: "Required" });
   return errors;
 };
+
+const login = async () => {
+  const response = await fetch('http://localhost:3001/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: state.email,
+      password: state.password
+    })
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    const token = data.token;
+    localStorage.setItem('token', token);
+  } else {
+    console.error('Login failed:', data.error);
+  }
+};
 </script>
+
