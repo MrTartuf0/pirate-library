@@ -32,19 +32,24 @@
             />
           </UFormGroup>
 
-          <UButton type="submit" class="mt-16 w-full justify-center"> Register now! </UButton>
-          <UDivider label="OR" class="mb-16"/>
-          <div class="flex justify-between">
-            <p class="text-sm">Already aboard? Sail on, matey!</p> 
-            <UButton to="/login">Log In</UButton>
-          </div>
+        <UButton type="submit" class="mt-16 w-full justify-center" @click="handleFormSubmit"> Register now! </UButton>
+        <UDivider label="OR" class="mb-16"/>
+        <div class="flex justify-between">
+          <p class="text-sm">Already aboard? Sail on, matey!</p> 
+          <UButton @click="handleLoginRedirect">Log In</UButton>
+        </div>
         </UForm>
       </div>
     </UContainer>
   </div>
 </template>
 
+
 <script setup>
+
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
 const state = reactive({
   email: undefined,
   password: undefined,
@@ -55,5 +60,32 @@ const validate = (state) => {
   if (!state.email) errors.push({ path: "email", message: "Required" });
   if (!state.password) errors.push({ path: "password", message: "Required" });
   return errors;
+};
+
+const handleFormSubmit = async () => {
+  const response = await fetch('http://localhost:3001/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: state.email,
+      password: state.password
+    })
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    const token = data.token;
+    localStorage.setItem('token', token);
+    router.push('/');
+  } else {
+    console.error('Registration failed:', data.error);
+  }
+};
+
+const handleLoginRedirect = () => {
+  router.push('/login');
 };
 </script>

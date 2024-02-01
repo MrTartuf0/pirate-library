@@ -1,6 +1,10 @@
 <template>
   <UContainer>
     <div class="flex items-center flex-col">
+      <div class="flex items-center justify-end w-full">
+        <UButton @click="redirectTo('/login')" class="mr-4">Login</UButton>
+        <UButton @click="redirectTo('/upload')">Upload</UButton>
+      </div>
       <img src="/logo.svg" class="w-1/2">
       <p class="pb-8">
         🏴‍☠️ Ahoy, Matey! Welcome to the Literary Seas of Knowledge at our Pirate-themed Library! 🏴‍☠️
@@ -29,11 +33,17 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const books = ref([])
 
 async function formSubmit(q) {
   await navigateTo('/search/' + q)
+}
+
+function redirectTo(path) {
+  router.push(path);
 }
 
 onMounted(async () => {

@@ -37,7 +37,10 @@
             </p>
           </UFormGroup>
 
-          <UButton type="submit" class="mt-16 w-full justify-center"> Log In </UButton>
+          <UButton type="submit" class="mt-16 w-full justify-center" @click="handleLogin">
+            Log In
+          </UButton>
+
           <UDivider label="OR" class="mb-16"/>
           <div class="flex justify-between">
             <p class="text-sm">Join the Pirate Crew: Chart yer course</p> 
@@ -47,11 +50,13 @@
       </div>
     </UContainer>
   </div>
-  <UButton type="submit" class="mt-16 w-full justify-center" @click="login"> Log In </UButton>
 
 </template>
 
+
 <script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const state = reactive({
   email: undefined,
@@ -65,7 +70,7 @@ const validate = (state) => {
   return errors;
 };
 
-const login = async () => {
+const handleLogin = async () => {
   const response = await fetch('http://localhost:3001/login', {
     method: 'POST',
     headers: {
@@ -82,9 +87,10 @@ const login = async () => {
   if (response.ok) {
     const token = data.token;
     localStorage.setItem('token', token);
+    router.push('/');
   } else {
     console.error('Login failed:', data.error);
   }
 };
-</script>
 
+</script>
