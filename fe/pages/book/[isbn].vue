@@ -18,13 +18,20 @@
       </UForm>
     </div>
     <UDivider class="mb-4" />
-    <UCard>
+    <UCard v-if="error" class="">
+      <div class="flex flex-col items-center gap-4">
+        <h1 class="font-bold text-6xl">404 - NOT FOUND</h1>
+        <p>🔍 Ahoy! No hidden treasures found on this quest. 🏴‍☠️ Keep sailin' and searching, matey!</p>
+      </div>
+    </UCard>
+    <UCard v-else>
       <div class="flex justify-between gap-12">
         <div class="flex flex-col justify-between">
           <div>
-            <h1 class="text-4xl font-bold pb-2">{{ mockData.title }}</h1>
-            <p class="underline cursor-pointer pb-1">{{ mockData.author }}</p>
-            <p>{{ mockData.plot }}</p>
+            <h1 class="text-4xl font-bold pb-2">{{ book.title }}</h1>
+            <p class="underline cursor-pointer pb-1">{{ book.author }}</p>
+            <p>{{ book.plot }}</p>
+            {{  }}
           </div>
           <div class="grid grid-cols-3 w-full gap-6">
             <div class="space-y-2">
@@ -32,7 +39,7 @@
                 Categories:
                 <span
                   class="underline mr-1 text-white"
-                  v-for="(cat, index) in mockData.categories"
+                  v-for="(cat, index) in book.categories"
                   :key="index"
                 >
                   {{ cat }}
@@ -40,33 +47,33 @@
               </p>
               <p class="text-gray-400">
                 Language:
-                <span class="text-white">{{ mockData.language }}</span>
+                <span class="text-white">{{ book.language }}</span>
               </p>
             </div>
             <div class="space-y-2">
               <p class="text-gray-400">
-                Year: <span class="text-white">{{ mockData.year }}</span>
+                Year: <span class="text-white">{{ book.year }}</span>
               </p>
               <p class="text-gray-400">
                 Publisher:
-                <span class="text-white">{{ mockData.publisher }}</span>
+                <span class="text-white">{{ book.publisher }}</span>
               </p>
               <p class="text-gray-400">
-                Pages: <span class="text-white">{{ mockData.pages }}</span>
+                Pages: <span class="text-white">{{ book.pages }}</span>
               </p>
             </div>
             <div class="space-y-2">
               <p class="text-gray-400">
                 ISBN:
-                <UBadge :label="mockData.isbn" variant="soft" />
+                <UBadge :label="book.isbn" variant="soft" />
               </p>
               <p class="font-semibold ">
-                Resource: <UButton size="xs">{{ mockData.filetype + ' ' + mockData.filesize }}</UButton>
+                Resource: <UButton size="xs">{{ book.filetype + ' ' + book.filesize }}</UButton>
               </p>
             </div>
           </div>
         </div>
-        <img :src="mockData.thumbnail" class="h-96" />
+        <img :src="book.thumbnail" class="h-96" />
       </div>
     </UCard>
   </UContainer>
@@ -74,7 +81,10 @@
 
 <script setup>
 const route = useRoute();
-const searchQuery = ref(route.params.query);
+const searchISBN = ref(route.params.isbn);
+
+const { error, data:book } = await useFetch('http://localhost:3001/search-by-isbn/' + searchISBN.value)
+
 
 const mockData = ref({
   title: "Niente può fermarti. Can't Hurt Me",
