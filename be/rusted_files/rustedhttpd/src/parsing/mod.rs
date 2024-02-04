@@ -66,6 +66,7 @@ pub fn parse_content_type(path: &str) -> String {
         "ico" => content_type = String::from("image/x-icon"),
         "zip" => content_type = String::from("application/zip"),
         "pdf" => content_type = String::from("application/pdf"),
+        "svg" => content_type = String::from("image/svg+xml"),
         "json" => content_type = String::from("application/json"),
         "mp4" => content_type = String::from("video/mp4"),
         "mp3" => content_type = String::from("audio/mpeg"),

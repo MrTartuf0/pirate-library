@@ -24,3 +24,8 @@ services:
       - ./be/mongo:/etc/mongo
     ports:
       - "27017:27017"
+
+  frontend:
+    build: ./fe
+    ports:
+      - "3000:80"
