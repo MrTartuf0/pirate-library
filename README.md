@@ -75,8 +75,8 @@ Nel contesto dell'API REST, "rustedhttpd" è integrato come parte del sistema di
 ### /upload-book (POST)
 Questo endpoint consente agli utenti autenticati di caricare un nuovo libro insieme alle informazioni associate e ai file del libro e alla miniatura.
 
-- **Metodo HTTP:** POST
-- **Endpoint:** /upload-book
+- **Metodo HTTP:** `POST`
+- **Endpoint:** `/upload-book`
 - **Headers:**
   - Authorization: Token JWT per l'autenticazione dell'utente
 - **Body (form-data):**
@@ -108,8 +108,8 @@ Questo endpoint consente agli utenti autenticati di caricare un nuovo libro insi
 ### /login (POST)
 Questo endpoint consente agli utenti di autenticarsi fornendo email e password.
 
-- **Metodo HTTP:** POST
-- **Endpoint:** /login
+- **Metodo HTTP:** `POST`
+- **Endpoint:** `/login`
 - **Body:**
   - ```json
     {
@@ -129,8 +129,8 @@ Questo endpoint consente agli utenti di autenticarsi fornendo email e password.
 ### /create (POST)
 Questo endpoint consente agli utenti di creare un nuovo account fornendo email e password.
 
-- **Metodo HTTP:** POST
-- **Endpoint:** /create
+- **Metodo HTTP:** `POST`
+- **Endpoint:** `/create`
 - **Body:**
   - ```json
     {
@@ -153,15 +153,15 @@ Questo endpoint consente agli utenti di creare un nuovo account fornendo email e
 
 Questo endpoint consente agli utenti di cercare un libro per ISBN.
 
-Endpoint: /search-by-isbn/:isbn
+**Endpoint:** `/search-by-isbn/:isbn`
 
-Metodo HTTP: GET
+**Metodo HTTP:** `GET`
 
-Parametri:
+**Parametri**:
 
 isbn: ISBN del libro (parametro di percorso)
 
-Risposte:
+**Risposte**:
 
 200 OK: Il libro è stato trovato e viene restituito.
 
@@ -174,46 +174,50 @@ Risposte:
 
 Questo endpoint consente agli utenti di cercare libri per nome.
 
-Endpoint: /search-by-name/:name
+**Endpoint**: `/search-by-name/:name`
 
-Metodo HTTP: GET
+**Metodo HTTP**: `GET`
 
-Parametri:
+**Parametri**:
 
 name: Nome del libro (parametro di percorso)
 
-Risposte:
+**Risposte**:
 
-200 OK: I libri sono stati trovati e vengono restituiti.
-
-404 Not Found: Nessun libro trovato.
-
-500 Internal Server Error: Errore interno del server.
+  - ```json
+    {
+      "200 OK": "La lista dei libri è stata restituita con successo.",
+      "404 Not Found": "Nessun libro trovato.",
+      "500 Internal Server Error": "Errore interno del server."
+    }
+    ```
 
 ### /books (GET)
 
 Questo endpoint consente agli utenti di ottenere una lista paginata di libri.
 
-Metodo HTTP: GET
+**Metodo HTTP:** `GET`
 
-Endpoint: /books
+**Endpoint:** `/books`
 
-Parametri:
+**Parametri:**
 
 page: Numero di pagina (parametro di query, opzionale)
 
-Risposte:
+**Risposte:**
 
-200 OK: La lista dei libri è stata restituita con successo.
-
-500 Internal Server Error: Errore interno del server.
-
+  - ```json
+    {
+      "200 OK": "La lista dei libri è stata restituita con successo.",
+      "500 Internal Server Error": "Errore interno del server."
+    }
+    ```
 
 ### /search-by-name/:name (GET)
 Questo endpoint consente agli utenti di cercare libri per nome.
 
 - **Endpoint:** /search-by-name/:name
-- **Metodo HTTP:** GET
+- **Metodo HTTP:** `GET`
 - **Parametri:**
   - name: Nome del libro (parametro di percorso)
 - **Risposte:**
@@ -228,8 +232,8 @@ Questo endpoint consente agli utenti di cercare libri per nome.
 ### /books (GET)
 Questo endpoint consente agli utenti di ottenere una lista paginata di libri.
 
-- **Metodo HTTP:** GET
-- **Endpoint:** /books
+- **Metodo HTTP:** `GET`
+- **Endpoint:** `/books`
 - **Parametri:**
   - page: Numero di pagina (parametro di query, opzionale)
 - **Risposte:**
