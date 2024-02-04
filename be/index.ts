@@ -47,6 +47,8 @@ const bookSchema = new mongoose.Schema({
   added: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   url_link: String,
+  extension: String,
+  file_size: Number,
 });
 
 
@@ -97,7 +99,7 @@ app.post('/upload-book', upload, async (req: Request, res: Response) => {
     const newBook = new Book({
       isbn,
       title,
-      thumbnail: "http://localhost:8000/" + uploadedThumbnail.originalname,
+      thumbnail: "http://localhost:8000/" + uploadedThumbnail.filename.replace(" ", "%20"),
       plot,
       year,
       language,
@@ -106,8 +108,11 @@ app.post('/upload-book', upload, async (req: Request, res: Response) => {
       publisher,
       categories,
       user: userId,
-      url_link: "http://localhost:8000/" + uploadedBook.filename,
+      url_link: "http://localhost:8000/" + uploadedBook.filename.replace(" ", "%20"),
+      extension: uploadedBook.mimetype,
+      file_size: uploadedBook.size / 1024 / 1024
     });
+    console.log("newBook", newBook);
 
     await newBook.save();
 
