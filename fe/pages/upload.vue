@@ -16,6 +16,7 @@
           <UFormGroup label="ISBN" name="isbn">
             <UInput
               v-model="isbn"
+              type="number"
               icon="i-heroicons-book-open"
               trailing
               placeholder="Enter the book's ISBN"
@@ -43,6 +44,7 @@
           <UFormGroup label="Year" name="year">
             <UInput
               v-model="year"
+              type="number"
               icon="i-heroicons-calendar"
               trailing
               placeholder="Enter the book's publication year"
@@ -62,6 +64,7 @@
             <UInput
               v-model="pages"
               icon="i-heroicons-file-lines"
+              type="number"
               trailing
               placeholder="Enter the number of pages in the book"
             />
