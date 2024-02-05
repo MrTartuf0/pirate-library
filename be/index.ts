@@ -201,7 +201,7 @@ app.get('/books', async (req: Request, res: Response) => {
     const limit: number = 25;
     const skip: number = (page - 1) * limit;
 
-    const books = await Book.find().skip(skip).limit(limit);
+    const books = await Book.find().sort({ added: -1 }).skip(skip).limit(limit);
 
     res.json(books);
   } catch (error) {
