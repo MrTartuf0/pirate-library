@@ -409,6 +409,67 @@ Questo endpoint consente agli utenti di cercare libri per nome.
     }
     ```
 
+### /edit-book/:bookId (PUT)
+
+Questo endpoint consente agli utenti di aggiornare i dettagli di un libro esistente.
+
+- **Endpoint:** /edit-book/:bookId
+- **Metodo HTTP:** `PUT`
+- **Parametri URL:**
+  - bookId (obbligatorio): L'ID del libro da modificare.
+- **Intestazione:**
+  - Authorization: Token di autenticazione JWT.
+- **Corpo della Richiesta:**
+  - Il corpo della richiesta deve contenere i dati aggiornati del libro nel formato JSON. I campi che possono essere aggiornati sono:
+    - isbn (String)
+    - title (String)
+    - plot (String)
+    - year (Number)
+    - language (String)
+    - pages (Number)
+    - author (String)
+    - publisher (String)
+    - categories (Array)
+- **Esempio:**
+  ```json
+  {
+    "title": "Nuovo Titolo del Libro",
+    "plot": "Nuovo Riassunto del Libro",
+    "year": 2023
+  }
+  ```
+- **Risposte:**
+  - ```json
+    {
+      "200 OK": "La richiesta è stata elaborata con successo e il libro è stato aggiornato correttamente.",
+      "400 Bad Request": "Se i dati inviati non sono validi o il corpo della richiesta è vuoto.",
+      "403 Forbidden": "Se l'utente non è autorizzato a modificare il libro.",
+      "404 Not Found": "Se il libro specificato non esiste.",
+      "500 Internal Server Error": "Se si è verificato un errore durante l'elaborazione della richiesta sul server."
+    }
+    ```
+
+### /delete-book/:bookId (DELETE)
+
+Questo endpoint consente agli utenti di eliminare un libro esistente.
+
+- **Metodo HTTP:** `DELETE`
+- **Endpoint:** /delete-book/:bookId
+- **Parametri URL:**
+  - bookId (obbligatorio): L'ID del libro da eliminare.
+- **Intestazione:**
+  - Authorization: Token di autenticazione JWT.
+- **Risposte:**
+  - ```json
+    {
+      "200 OK": "La richiesta è stata elaborata con successo e il libro è stato eliminato correttamente.",
+      "403 Forbidden": "Se l'utente non è autorizzato a eliminare il libro.",
+      "404 Not Found": "Se il libro specificato non esiste.",
+      "500 Internal Server Error": "Se si è verificato un errore durante l'elaborazione della richiesta sul server."
+    }
+    ```
+
+
 ### /books (GET)
 Questo endpoint consente agli utenti di ottenere una lista paginata di libri.
 
