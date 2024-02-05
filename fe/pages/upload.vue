@@ -41,15 +41,27 @@
             />
           </UFormGroup>
 
-          <UFormGroup label="Year" name="year">
-            <UInput
-              v-model="year"
-              type="number"
-              icon="i-heroicons-calendar"
-              trailing
-              placeholder="Enter the book's publication year"
-            />
-          </UFormGroup>
+          <div class="flex gap-4">
+            <UFormGroup label="Year" name="year" class="w-full">
+              <UInput
+                v-model="year"
+                type="number"
+                icon="i-heroicons-calendar"
+                trailing
+                placeholder="Enter the book's publication year"
+              />
+            </UFormGroup>
+
+            <UFormGroup label="Pages" name="pages" class="w-full">
+              <UInput
+                v-model="pages"
+                icon="i-heroicons-file-lines"
+                type="number"
+                trailing
+                placeholder="Enter the number of pages in the book"
+              />
+            </UFormGroup>
+          </div>
 
           <UFormGroup label="Language" name="language">
             <UInput
@@ -57,16 +69,6 @@
               icon="i-heroicons-globe"
               trailing
               placeholder="Enter the book's language"
-            />
-          </UFormGroup>
-
-          <UFormGroup label="Pages" name="pages">
-            <UInput
-              v-model="pages"
-              icon="i-heroicons-file-lines"
-              type="number"
-              trailing
-              placeholder="Enter the number of pages in the book"
             />
           </UFormGroup>
 
@@ -96,45 +98,68 @@
               placeholder="Enter the book's categories"
             />
           </UFormGroup>
-        
+
           <!-- Standard file input for uploading books -->
           <div class="flex flex-col space-y-2">
-            <label for="bookFile" class="text-lg font-medium">Upload Book</label>
-            <input type="file" id="bookFile" @change="onBookFileChange" accept=".pdf,.epub" required />
-            <span v-if="bookFileError" class="text-red-500">{{ bookFileError }}</span>
+            <label for="bookFile" class="text-lg font-medium"
+              >Upload Book</label
+            >
+            <input
+              type="file"
+              id="bookFile"
+              @change="onBookFileChange"
+              accept=".pdf,.epub"
+              required
+            />
+            <span v-if="bookFileError" class="text-red-500">{{
+              bookFileError
+            }}</span>
           </div>
 
           <!-- Standard file input for uploading thumbnails -->
           <div class="flex flex-col space-y-2">
-            <label for="thumbnailFile" class="text-lg font-medium">Upload Thumbnail</label>
-            <input type="file" id="thumbnailFile" @change="onThumbnailFileChange" accept="image/*" required />
-            <span v-if="thumbnailFileError" class="text-red-500">{{ thumbnailFileError }}</span>
+            <label for="thumbnailFile" class="text-lg font-medium"
+              >Upload Thumbnail</label
+            >
+            <input
+              type="file"
+              id="thumbnailFile"
+              @change="onThumbnailFileChange"
+              accept="image/*"
+              required
+            />
+            <span v-if="thumbnailFileError" class="text-red-500">{{
+              thumbnailFileError
+            }}</span>
           </div>
 
           <UButton type="submit" class="mt-16 w-full justify-center">
             Upload Book
           </UButton>
-
-
         </UForm>
       </div>
     </UContainer>
+    <UNotifications />
   </div>
 </template>
 
 <script setup>
-import axios from 'axios';
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import axios from "axios";
 
+const toast = useToast()
 const router = useRouter();
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 // Function to decode JWT token
 function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`).join(''));
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join("")
+  );
   return JSON.parse(jsonPayload);
 }
 
@@ -147,25 +172,33 @@ const userId = computed(() => {
   return null;
 });
 
+function normalizeFileName(fileName) {
+  return fileName.replace(/[^\w.]+/g, "_");
+}
+
 // Refs for form fields
-const isbn = ref('');
-const title = ref('');
-const plot = ref('');
+const isbn = ref("");
+const title = ref("");
+const plot = ref("");
 const year = ref(0);
-const language = ref('');
+const language = ref("");
 const pages = ref(0);
-const author = ref('');
-const publisher = ref('');
-const categories = ref('');
+const author = ref("");
+const publisher = ref("");
+const categories = ref("");
 const bookFile = ref(null);
 const thumbnailFile = ref(null);
-const bookFileError = ref('');
-const thumbnailFileError = ref('');
+const bookFileError = ref("");
+const thumbnailFileError = ref("");
 
 // Function to handle book file change
 function onBookFileChange(event) {
-  const file = event.target.files[0];
-  bookFile.value = file;
+  let file = event.target.files[0];
+  const myNewFile = new File([file], normalizeFileName(file.name), {
+    type: file.type,
+  });
+  console.log(myNewFile);
+  bookFile.value = myNewFile;
 }
 
 // Function to handle thumbnail file change
@@ -176,8 +209,10 @@ function onThumbnailFileChange(event) {
 
 // Function to validate file inputs
 function validateFileInputs() {
-  bookFileError.value = !bookFile.value ? 'Please upload a book file' : '';
-  thumbnailFileError.value = !thumbnailFile.value ? 'Please upload a thumbnail image' : '';
+  bookFileError.value = !bookFile.value ? "Please upload a book file" : "";
+  thumbnailFileError.value = !thumbnailFile.value
+    ? "Please upload a thumbnail image"
+    : "";
   return !bookFileError.value && !thumbnailFileError.value;
 }
 
@@ -188,35 +223,35 @@ async function uploadBook() {
   }
 
   const formData = new FormData();
-  formData.append('isbn', isbn.value);
-  formData.append('title', title.value);
-  formData.append('plot', plot.value);
-  formData.append('year', year.value);
-  formData.append('language', language.value);
-  formData.append('pages', pages.value);
-  formData.append('author', author.value);
-  formData.append('publisher', publisher.value);
-  formData.append('categories', categories.value);
-  formData.append('book', bookFile.value);
-  formData.append('thumbnail', thumbnailFile.value);
+  formData.append("isbn", isbn.value);
+  formData.append("title", title.value);
+  formData.append("plot", plot.value);
+  formData.append("year", year.value);
+  formData.append("language", language.value);
+  formData.append("pages", pages.value);
+  formData.append("author", author.value);
+  formData.append("publisher", publisher.value);
+  formData.append("categories", categories.value);
+  formData.append("book", bookFile.value);
+  formData.append("thumbnail", thumbnailFile.value);
 
   try {
-    const response = await axios.post('http://localhost:3001/upload-book', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await axios.post(
+      "http://localhost:3001/upload-book",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(response.data);
-    // Redirect to a success page or handle success as needed
-    router.push('/success');
+    toast.add({ title: 'Success' , description: response.data.message})
+
   } catch (error) {
     console.error(error.response.data);
-    // Handle errors, display error messages, etc.
+    toast.add({ title: 'Error' , description: error.response.data.error})
   }
 }
 </script>
-
-<style scoped>
-/* Styles */
-</style>

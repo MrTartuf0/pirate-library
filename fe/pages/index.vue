@@ -2,8 +2,18 @@
   <UContainer>
     <div class="flex items-center flex-col">
       <div class="flex items-center justify-end w-full gap-4 pt-4">
-        <UButton to="/login">Login</UButton>
-        <UButton to="/upload">Upload</UButton>
+        <UButton 
+          to="/login"
+          icon="i-heroicons-user"
+        >
+          Login
+        </UButton>
+        <UButton 
+          to="/upload"
+          icon="i-heroicons-arrow-up-tray"
+        >
+          Upload
+        </UButton>
       </div>
       <img src="/logo.svg" class="w-1/2" />
       <p class="pb-8">
