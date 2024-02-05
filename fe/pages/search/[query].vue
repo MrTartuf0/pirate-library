@@ -18,18 +18,33 @@
       </UForm>
     </div>
     <UDivider class="mb-4" />
+    <UCard v-if="error" class="">
+      <div class="flex flex-col items-center gap-4">
+        <h1 class="font-bold text-6xl">404 - NOT FOUND</h1>
+        <p>
+          🔍 Ahoy! No hidden treasures found on this quest. 🏴‍☠️ Keep sailin' and
+          searching, matey!
+        </p>
+      </div>
+    </UCard>
     <UCard
-      v-for="(item, index) in mockData.results"
+      v-else
+      v-for="(item, index) in data"
       :key="index"
-      class=" mb-6 dark:hover:ring-primary-500 dark:hover:ring-2"
+      class="mb-6 dark:hover:ring-primary-500 dark:hover:ring-2"
     >
       <div class="flex gap-6">
-        <img :src="item.thumbnail" class="w-32 cursor-pointer" />
+        <nuxt-link :to="`/book/${item.isbn}`">
+          <img :src="item.thumbnail" class="w-32 cursor-pointer" />
+        </nuxt-link>
         <div class="flex flex-col justify-between w-full">
           <div class="space-y-1">
-            <h1 class="underline text-2xl cursor-pointer">
+            <nuxt-link
+              class="underline text-2xl cursor-pointer"
+              :to="`/book/${item.isbn}`"
+            >
               {{ item.title }}
-            </h1>
+            </nuxt-link>
             <p
               class="text-gray-400 cursor-pointer hover:text-primary-200"
               @click="formSubmit(item.publisher.replaceAll('/', ' '))"
@@ -40,19 +55,19 @@
           <div class="flex justify-end gap-4">
             <div class="space-x-2">
               <span class="text-gray-400">Author:</span>
-              <UBadge :label="item.author" variant="soft"/>
+              <UBadge :label="item.author" variant="soft" />
             </div>
             <div class="space-x-2">
               <span class="text-gray-400">Year:</span>
-              <UBadge :label="item.year" variant="soft"/>
+              <UBadge :label="item.year" variant="soft" />
             </div>
             <div class="space-x-2">
               <span class="text-gray-400">Language:</span>
-              <UBadge :label="item.language" variant="soft"/>
+              <UBadge :label="item.language" variant="soft" />
             </div>
             <div class="space-x-2">
               <span class="text-gray-400">Filetype:</span>
-              <UBadge :label="item.filetype" variant="soft"/>
+              <UBadge :label="item.extension" variant="soft" />
             </div>
           </div>
         </div>
@@ -65,46 +80,51 @@
 const route = useRoute();
 const searchQuery = ref(route.params.query);
 
-const mockData = ref({
-  results: [
-    {
-      title:
-        "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
-      thumbnail:
-        "https://isbncoverdb.com/images/book-cover-atomic-habits-1770005.webp",
-      year: 2022,
-      language: "English",
-      filetype: "pdf",
-      author: "James Clear",
-      publisher: "mrTartuf0",
-    },
-    {
-      title:
-        "Atomic Habits, I Will Teach You To Be Rich, Mindset, The One Thing 4 Books Collection Set",
-      thumbnail:
-        "https://isbncoverdb.com/images/book-cover-atomic-habits-i-will-teach-you-to-be-rich-mindset-the-one-thing-4-books-collection-set-803350.webp",
-      year: 2020,
-      language: "Swedish",
-      filetype: "epub",
-      author: "James Clear",
-      publisher:
-        "Random House Business/Yellow Kite/Robinson/John Murray Learning",
-    },
-    {
-      title: "large image",
-      thumbnail:
-        "https://images.unsplash.com/photo-1566895291281-ea63efd4bdbc?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fDklM0ExNnxlbnwwfHwwfHx8MA%3D%3D",
-      year: 2020,
-      language: "Swedish",
-      filetype: "epub",
-      author: "James Clear",
-      publisher:
-        "Random House Business/Yellow Kite/Robinson/John Murray Learning",
-    },
-  ],
-});
+const { data, error } = await useFetch(
+  "http://localhost:3001/search-by-name/" + searchQuery.value
+);
 
 async function formSubmit(q) {
   await navigateTo("/search/" + q);
 }
+
+// const mockData = ref({
+//   results: [
+//     {
+//       title:
+//         "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
+//       thumbnail:
+//         "https://isbncoverdb.com/images/book-cover-atomic-habits-1770005.webp",
+//       year: 2022,
+//       language: "English",
+//       filetype: "pdf",
+//       author: "James Clear",
+//       publisher: "mrTartuf0",
+//     },
+//     {
+//       title:
+//         "Atomic Habits, I Will Teach You To Be Rich, Mindset, The One Thing 4 Books Collection Set",
+//       thumbnail:
+//         "https://isbncoverdb.com/images/book-cover-atomic-habits-i-will-teach-you-to-be-rich-mindset-the-one-thing-4-books-collection-set-803350.webp",
+//       year: 2020,
+//       language: "Swedish",
+//       filetype: "epub",
+//       author: "James Clear",
+//       publisher:
+//         "Random House Business/Yellow Kite/Robinson/John Murray Learning",
+//     },
+//     {
+//       title: "large image",
+//       thumbnail:
+//         "https://images.unsplash.com/photo-1566895291281-ea63efd4bdbc?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fDklM0ExNnxlbnwwfHwwfHx8MA%3D%3D",
+//       year: 2020,
+//       language: "Swedish",
+//       filetype: "epub",
+//       author: "James Clear",
+//       publisher:
+//         "Random House Business/Yellow Kite/Robinson/John Murray Learning",
+//     },
+//   ],
+// });
+
 </script>

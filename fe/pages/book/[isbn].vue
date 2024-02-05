@@ -79,7 +79,12 @@
             </div>
           </div>
         </div>
-        <img :src="book.thumbnail" class="h-96" />
+        <nuxt-link :to="book.url_link" target="_blank" class="h-96 shrink-0">
+          <img
+            :src="book.thumbnail"
+            class="h-96 shrink-0"
+          />
+        </nuxt-link>
       </div>
     </UCard>
   </UContainer>
