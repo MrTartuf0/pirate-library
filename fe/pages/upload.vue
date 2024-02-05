@@ -147,7 +147,6 @@
 import axios from "axios";
 
 const toast = useToast()
-const router = useRouter();
 const token = localStorage.getItem("token");
 
 // Function to decode JWT token
@@ -250,8 +249,8 @@ async function uploadBook() {
     toast.add({ title: 'Success' , description: response.data.message})
 
   } catch (error) {
-    console.error(error.response.data);
-    toast.add({ title: 'Error' , description: error.response.data.error})
+    toast.add({ title: 'Error' , description: error.response})
+    console.error(error.response);
   }
 }
 </script>

@@ -49,14 +49,15 @@
         </UForm>
       </div>
     </UContainer>
+    <UNotifications />
   </div>
-
 </template>
 
 
 <script setup>
 import { useRouter } from 'vue-router';
 const router = useRouter();
+const toast = useToast()
 
 const state = reactive({
   email: undefined,
@@ -89,6 +90,7 @@ const handleLogin = async () => {
     localStorage.setItem('token', token);
     router.push('/');
   } else {
+    toast.add({ title: 'Error' , description: data.error})
     console.error('Login failed:', data.error);
   }
 };
