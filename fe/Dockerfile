@@ -6,11 +6,11 @@ WORKDIR /rustedhttpd
 RUN cargo build --release
 RUN mv /rustedhttpd/target/release/rustedhttpd /rustedhttpd_bin
 
-FROM oven/bun:1 as web_builder
+FROM node:20.11 as web_builder
 COPY . /app
 WORKDIR /app
-RUN bun install
-RUN bun run generate
+RUN npm install
+RUN npm run generate
 
 FROM debian:12.0-slim
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev

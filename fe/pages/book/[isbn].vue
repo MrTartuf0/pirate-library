@@ -21,7 +21,10 @@
     <UCard v-if="error" class="">
       <div class="flex flex-col items-center gap-4">
         <h1 class="font-bold text-6xl">404 - NOT FOUND</h1>
-        <p>🔍 Ahoy! No hidden treasures found on this quest. 🏴‍☠️ Keep sailin' and searching, matey!</p>
+        <p>
+          🔍 Ahoy! No hidden treasures found on this quest. 🏴‍☠️ Keep sailin' and
+          searching, matey!
+        </p>
       </div>
     </UCard>
     <UCard v-else>
@@ -31,7 +34,7 @@
             <h1 class="text-4xl font-bold pb-2">{{ book.title }}</h1>
             <p class="underline cursor-pointer pb-1">{{ book.author }}</p>
             <p>{{ book.plot }}</p>
-            {{  }}
+            {{}}
           </div>
           <div class="grid grid-cols-3 w-full gap-6">
             <div class="space-y-2">
@@ -67,8 +70,11 @@
                 ISBN:
                 <UBadge :label="book.isbn" variant="soft" />
               </p>
-              <p class="font-semibold ">
-                Resource: <UButton size="xs">{{ book.filetype + ' ' + book.filesize }}</UButton>
+              <p class="font-semibold">
+                Resource:
+                <UButton size="xs" :to="book.url_link" target="_blank" external>
+                  {{ book.extension + " " + book.file_size.toFixed(2) + "Mb" }}
+                </UButton>
               </p>
             </div>
           </div>
@@ -83,8 +89,9 @@
 const route = useRoute();
 const searchISBN = ref(route.params.isbn);
 
-const { error, data:book } = await useFetch('http://localhost:3001/search-by-isbn/' + searchISBN.value)
-
+const { error, data: book } = await useFetch(
+  "http://localhost:3001/search-by-isbn/" + searchISBN.value
+);
 
 const mockData = ref({
   title: "Niente può fermarti. Can't Hurt Me",
