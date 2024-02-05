@@ -210,6 +210,56 @@ app.get('/books', async (req: Request, res: Response) => {
   }
 });
 
+app.put('/edit-book/:bookId', verifyToken, async (req: Request, res: Response) => {
+  const bookId = req.params.bookId;
+  const userId = req.userId; 
+  try {
+    const updatedBookData = req.body; 
+    const existingBook = await Book.findOne({ _id: bookId });
+
+    if (!existingBook) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+
+    if (existingBook.user.toString() !== userId) {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+    await Book.findByIdAndUpdate(bookId, updatedBookData);
+
+    res.status(200).json({ message: 'Book updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete('/delete-book/:bookId', verifyToken, async (req: Request, res: Response) => {
+  const bookId = req.params.bookId;
+  const userId = req.userId; 
+
+  try {
+    const existingBook = await Book.findOne({ _id: bookId });
+
+    if (!existingBook) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+
+    if (existingBook.user.toString() !== userId) {
+      return res.status(403).json({ error: 'Unauthorized access' });
+    }
+
+
+    await Book.findByIdAndDelete(bookId);
+
+    res.status(200).json({ message: 'Book deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
