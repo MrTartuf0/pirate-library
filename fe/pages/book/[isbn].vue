@@ -34,7 +34,7 @@
             <div>
               <div class="flex justify-between">
                 <h1 class="text-4xl font-bold pb-2">{{ book.title }}</h1>
-                <div class="space-x-4" v-if="checkTokenExists()">
+                <div class="space-x-4 flex-shrink-0" v-if="checkTokenExists()">
                   <UButton
                     icon="i-heroicons-trash"
                     size="sm"
