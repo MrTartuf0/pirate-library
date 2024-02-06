@@ -334,7 +334,10 @@ async function editBook() {
 
     const responseData = await response.json();
     console.log(responseData);
+    toast.add({ title: 'Success' , description: responseData.message+' , refresh the page'})
+    
   } catch (error) {
+    toast.add({ title: 'Error' , description: error.response})
     console.error("Error editing book:", error);
   }
 
