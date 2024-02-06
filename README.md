@@ -151,8 +151,7 @@ Questa pagina consente agli utenti autenticati di caricare informazioni e risors
 
 ## Flusso Operativo
 
-![Business process flow example](https://github.com/MrTartuf0/didyk-nicolardi-pirate-library/assets/79630556/47a67346-05dc-4bbe-869a-9a849d7f62d5)
-
+![Business process flow example (1)](https://github.com/MrTartuf0/didyk-nicolardi-pirate-library/assets/79630556/59814d8f-ebb8-42ae-a3ba-2445eb516afd)
 
 1. **Homepage**
    - Visualizzazione dei libri recenti.
