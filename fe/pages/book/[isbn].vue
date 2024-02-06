@@ -149,12 +149,13 @@
           ring: '',
         }"
       >
-        <UForm
-          :validate="validate"
-          :state="state"
-          class="space-y-4"
-          @submit="editBook"
-        >
+      <UForm
+  :validate="validate"
+  :state="editFormData"
+  class="space-y-4"
+  @submit="editBook"
+>
+
           <UFormGroup label="ISBN" name="isbn">
             <UInput
               v-model="editFormData.isbn"
@@ -309,25 +310,35 @@ async function editBook() {
   formData.append("author", editFormData.value.author);
   formData.append("publisher", editFormData.value.publisher);
   formData.append("categories", editFormData.value.categories);
-  // formData.append("book", bookFile.value);
-  // formData.append("thumbnail", thumbnailFile.value);
 
-  console.log(formData);
+  const jsonData = {};
+  formData.forEach((value, key) => {
+    jsonData[key] = value;
+  });
+
+  console.log(jsonData);
 
   try {
-    const response = await axios.put(
-      "http://localhost:3001/edit-book/"+book.value._id,
-      formData,
+    const token = localStorage.getItem("token"); // Retrieve token here
+    const response = await fetch(
+      "http://localhost:3001/edit-book/" + book.value._id,
       {
+        method: "PUT",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify(jsonData),
       }
     );
-    console.log(response.data);
+
+    const responseData = await response.json();
+    console.log(responseData);
   } catch (error) {
-    console.error(error.response);
+    console.error("Error editing book:", error);
   }
+
 }
+
+
 </script>

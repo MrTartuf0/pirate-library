@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 app.use(bodyParser.json());
 
 app.use(cors()); // Use cors middleware
@@ -211,6 +211,7 @@ app.get('/books', async (req: Request, res: Response) => {
 });
 
 app.put('/edit-book/:bookId', verifyToken, async (req: Request, res: Response) => {
+  console.log(req.params.bookId)
   const bookId = req.params.bookId;
   const userId = req.userId; 
   try {
