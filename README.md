@@ -136,6 +136,7 @@ La homepage presenta i libri aggiunti di recente e include la barra di ricerca p
 
 ### `book/[isbn].vue` - Pagina Dettaglio Libro
 Questa pagina consente agli utenti di visualizzare in dettaglio un libro utilizzando il codice ISBN come identificatore unico. Gli utenti possono anche scaricare il libro dalla stessa pagina.
+Se si dispone l'accesso a questa pagina da amministratore, sarà possibile eliminare e modificare il libro selezionato.
 
 ### `search/[query].vue` - Pagina Ricerca Libri
 Questa pagina fornisce un'interfaccia per effettuare ricerche globali basate sui nomi dei libri. Gli utenti possono inserire il titolo desiderato e visualizzare i risultati corrispondenti.
