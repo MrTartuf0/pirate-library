@@ -149,28 +149,6 @@ import axios from "axios";
 const toast = useToast()
 const token = localStorage.getItem("token");
 
-// Function to decode JWT token
-function parseJwt(token) {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
-}
-
-// Get user ID from parsed JWT token
-const userId = computed(() => {
-  if (token) {
-    const decodedToken = parseJwt(token);
-    return decodedToken.userId;
-  }
-  return null;
-});
-
 function normalizeFileName(fileName) {
   return fileName.replace(/[^\w.]+/g, "_");
 }
@@ -233,6 +211,8 @@ async function uploadBook() {
   formData.append("categories", categories.value);
   formData.append("book", bookFile.value);
   formData.append("thumbnail", thumbnailFile.value);
+
+  console.log(formData);
 
   try {
     const response = await axios.post(

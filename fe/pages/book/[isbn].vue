@@ -47,6 +47,7 @@
                     size="sm"
                     color="primary"
                     variant="outline"
+                    @click="showEdit = true"
                   />
                 </div>
               </div>
@@ -129,10 +130,126 @@
 
         <template #footer>
           <div class="flex w-full justify-end gap-4">
-            <UButton color="primary" variant="solid" @click="deleteBook()">Delete</UButton>
-            <UButton color="primary" variant="soft" @click="showConfirmDeletionModal = false">Cancel</UButton>
+            <UButton color="primary" variant="solid" @click="deleteBook()"
+              >Delete</UButton
+            >
+            <UButton
+              color="primary"
+              variant="soft"
+              @click="showConfirmDeletionModal = false"
+              >Cancel</UButton
+            >
           </div>
         </template>
+      </UCard>
+    </UModal>
+    <UModal v-model="showEdit">
+      <UCard
+        :ui="{
+          ring: '',
+        }"
+      >
+        <UForm
+          :validate="validate"
+          :state="state"
+          class="space-y-4"
+          @submit="editBook"
+        >
+          <UFormGroup label="ISBN" name="isbn">
+            <UInput
+              v-model="editFormData.isbn"
+              type="number"
+              icon="i-heroicons-book-open"
+              trailing
+              placeholder="Enter the book's ISBN"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Title" name="title">
+            <UInput
+              v-model="editFormData.title"
+              icon="i-heroicons-book"
+              trailing
+              placeholder="Enter the book's title"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Plot" name="plot">
+            <UInput
+              v-model="editFormData.plot"
+              icon="i-heroicons-file-code"
+              trailing
+              placeholder="Enter a brief description of the book's plot"
+            />
+          </UFormGroup>
+
+          <div class="flex gap-4">
+            <UFormGroup label="Year" name="year" class="w-full">
+              <UInput
+                v-model="editFormData.year"
+                type="number"
+                icon="i-heroicons-calendar"
+                trailing
+                placeholder="Enter the book's publication year"
+              />
+            </UFormGroup>
+
+            <UFormGroup label="Pages" name="pages" class="w-full">
+              <UInput
+                v-model="editFormData.pages"
+                icon="i-heroicons-file-lines"
+                type="number"
+                trailing
+                placeholder="Enter the number of pages in the book"
+              />
+            </UFormGroup>
+          </div>
+
+          <UFormGroup label="Language" name="language">
+            <UInput
+              v-model="editFormData.language"
+              icon="i-heroicons-globe"
+              trailing
+              placeholder="Enter the book's language"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Author" name="author">
+            <UInput
+              v-model="editFormData.author"
+              icon="i-heroicons-user"
+              trailing
+              placeholder="Enter the author's name"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Publisher" name="publisher">
+            <UInput
+              v-model="editFormData.publisher"
+              icon="i-heroicons-building"
+              trailing
+              placeholder="Enter the publisher's name"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Categories" name="categories">
+            <UInput
+              v-model="editFormData.categories"
+              icon="i-heroicons-tag"
+              trailing
+              placeholder="Enter the book's categories"
+            />
+          </UFormGroup>
+
+          <div class="flex w-full justify-end gap-4">
+            <UButton type="submit" color="primary" variant="solid">
+              Edit
+            </UButton>
+            <UButton color="primary" variant="soft" @click="showEdit = false">
+              Cancel
+            </UButton>
+          </div>
+        </UForm>
       </UCard>
     </UModal>
     <UNotifications />
@@ -146,10 +263,13 @@ const toast = useToast();
 const searchISBN = ref(route.params.isbn);
 
 const showConfirmDeletionModal = ref(false);
+const showEdit = ref(false);
 
 const { error, data: book } = await useFetch(
   "http://localhost:3001/search-by-isbn/" + searchISBN.value
 );
+
+const editFormData = ref({ ...book.value });
 
 function checkTokenExists() {
   const token = localStorage.getItem("token");
@@ -159,7 +279,6 @@ function checkTokenExists() {
 async function formSubmit(q) {
   await navigateTo("/search/" + q);
 }
-
 
 function deleteBook() {
   const { data } = useFetch(
@@ -174,30 +293,41 @@ function deleteBook() {
         console.log(response);
       },
     }
-  ).then(()=>{
-    return navigateTo('/', { redirectCode: 301 })
-  })
+  ).then(() => {
+    return navigateTo("/", { redirectCode: 301 });
+  });
 }
 
-// const mockData = ref({
-//   title: "Niente può fermarti. Can't Hurt Me",
-//   thumbnail:
-//     "https://static.1lib.sk/covers/books/1a/c7/52/1ac752391a26a02c3652e48ffa6e0b53.jpg",
-//   plot: "For David Goggins, childhood was a nightmare — poverty, prejudice, and physical abuse colored his days and haunted his nights. But through self-discipline, mental toughness, and hard work, Goggins transformed himself from a depressed, overweight young man with no future into a U.S. Armed Forces icon and one of the world's top endurance athletes. The only man in history to complete elite training as a Navy SEAL, Army Ranger, and Air Force Tactical Air Controller, he went on to set records in numerous endurance events, inspiring Outside magazine to name him “The Fittest (Real) Man in America.”",
-//   year: 2022,
-//   language: "English",
-//   isbn: 1804220493,
-//   pages: 69,
-//   author: "David Goggins",
-//   publisher: "Vallardi",
-//   categories: [
-//     "Self-help",
-//     "Personal development",
-//     "Habit Formation",
-//     "Behavioral Psychology",
-//   ],
-//   filetype: "pdf",
-//   filesize: "7.0mb",
-//   resource: "/api/file.pdf",
-// });
+async function editBook() {
+  const formData = new FormData();
+  formData.append("isbn", editFormData.value.isbn);
+  formData.append("title", editFormData.value.title);
+  formData.append("plot", editFormData.value.plot);
+  formData.append("year", editFormData.value.year);
+  formData.append("language", editFormData.value.language);
+  formData.append("pages", editFormData.value.pages);
+  formData.append("author", editFormData.value.author);
+  formData.append("publisher", editFormData.value.publisher);
+  formData.append("categories", editFormData.value.categories);
+  // formData.append("book", bookFile.value);
+  // formData.append("thumbnail", thumbnailFile.value);
+
+  console.log(formData);
+
+  try {
+    const response = await axios.put(
+      "http://localhost:3001/edit-book/"+book.value._id,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response.data);
+  } catch (error) {
+    console.error(error.response);
+  }
+}
 </script>
