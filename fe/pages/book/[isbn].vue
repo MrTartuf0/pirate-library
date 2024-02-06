@@ -40,7 +40,7 @@
                     size="sm"
                     color="primary"
                     variant="outline"
-                    @click="deleteBook()"
+                    @click="showConfirmDeletionModal = true"
                   />
                   <UButton
                     icon="i-heroicons-pencil-square"
@@ -109,6 +109,32 @@
         </div>
       </UCard>
     </UContainer>
+    <UModal v-model="showConfirmDeletionModal">
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <h1 class="font-bold text-xl">Confirm deletion?</h1>
+        </template>
+        <p>
+          Are you sure that you want to delete:
+          <strong>
+            {{ book.title }}
+          </strong>
+          ?
+        </p>
+
+        <template #footer>
+          <div class="flex w-full justify-end gap-4">
+            <UButton color="primary" variant="solid" @click="deleteBook()">Delete</UButton>
+            <UButton color="primary" variant="soft" @click="showConfirmDeletionModal = false">Cancel</UButton>
+          </div>
+        </template>
+      </UCard>
+    </UModal>
     <UNotifications />
   </div>
 </template>
@@ -118,6 +144,8 @@ const route = useRoute();
 const toast = useToast();
 
 const searchISBN = ref(route.params.isbn);
+
+const showConfirmDeletionModal = ref(false);
 
 const { error, data: book } = await useFetch(
   "http://localhost:3001/search-by-isbn/" + searchISBN.value
@@ -132,6 +160,7 @@ async function formSubmit(q) {
   await navigateTo("/search/" + q);
 }
 
+
 function deleteBook() {
   const { data } = useFetch(
     "http://localhost:3001/delete-book/" + book.value._id,
@@ -141,11 +170,13 @@ function deleteBook() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       onResponse({ response }) {
-        toast.add({ title: 'Success' , description: response.data.message})
+        toast.add({ title: "Success", description: response.data.message });
         console.log(response);
       },
     }
-  );
+  ).then(()=>{
+    return navigateTo('/', { redirectCode: 301 })
+  })
 }
 
 // const mockData = ref({

@@ -246,7 +246,7 @@ async function uploadBook() {
       }
     );
     console.log(response.data);
-    toast.add({ title: 'Success' , description: response.data.message})
+    toast.add({ title: 'Success' , description: response.data.message+' , go back to home to see your newly added book'})
 
   } catch (error) {
     toast.add({ title: 'Error' , description: error.response})
