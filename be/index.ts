@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 app.use(bodyParser.json());
 
 app.use(cors()); // Use cors middleware
