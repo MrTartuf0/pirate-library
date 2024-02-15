@@ -8,7 +8,7 @@ RUN cargo build --release
 RUN mv /rustedhttpd/target/release/rustedhttpd /rustedhttpd_bin
 
 
-FROM debian:12.0-slim
+FROM debian:bookworm-20240211-slim
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev
 COPY . /app
 WORKDIR /app
