@@ -12,7 +12,7 @@ WORKDIR /app
 RUN npm install
 RUN npm run generate
 
-FROM debian:12.0-slim
+FROM debian:bookworm-20240211-slim
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev
 WORKDIR /app
 COPY --from=rustedhttpd_builder /rustedhttpd_bin /usr/bin
